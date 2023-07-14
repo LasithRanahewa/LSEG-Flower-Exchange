@@ -16,7 +16,7 @@ using namespace std;
 ofstream execution_rep("execution_rep.csv");
 unsigned int t_count = 0;
 
-string instruments[5] = {"Rose", "Lavender", "Lotus", "Tulip", "Orchid"};
+vector<string> instruments = {"Rose", "Lavender", "Lotus", "Tulip", "Orchid"};
 
 string set_transaction_time()
 {
@@ -149,39 +149,8 @@ map<string, OrderBook> order_books_map = {
     {"Orchid", order_books[4]},
 };
 
-// vector<Order> order_book_buy_rose;
-// vector<Order> order_book_sell_rose;
-// vector<Order> order_book_buy_lavender;
-// vector<Order> order_book_sell_lavender;
-// vector<Order> order_book_buy_lotus;
-// vector<Order> order_book_sell_lotus;
-// vector<Order> order_book_buy_tulip;
-// vector<Order> order_book_sell_tulip;
-// vector<Order> order_book_buy_orchid;
-// vector<Order> order_book_sell_orchid;
-
-// five order books for five instruments
-// vector<Order> *order_books[5][2] = {
-//     {&order_book_buy_rose, &order_book_sell_rose},
-//     {&order_book_buy_lavender, &order_book_sell_lavender},
-//     {&order_book_buy_lotus, &order_book_sell_lotus},
-//     {&order_book_buy_tulip, &order_book_sell_tulip},
-//     {&order_book_buy_orchid, &order_book_sell_orchid},
-// };
-
 int main(int argc, char const *argv[])
 {
-    // make_heap(order_book_buy_rose.begin(), order_book_buy_rose.end(), compare_orders);
-    // make_heap(order_book_sell_rose.begin(), order_book_sell_rose.end(), compare_orders);
-    // make_heap(order_book_buy_lavender.begin(), order_book_buy_lavender.end(), compare_orders);
-    // make_heap(order_book_sell_lavender.begin(), order_book_sell_lavender.end(), compare_orders);
-    // make_heap(order_book_buy_lotus.begin(), order_book_buy_lotus.end(), compare_orders);
-    // make_heap(order_book_sell_lotus.begin(), order_book_sell_lotus.end(), compare_orders);
-    // make_heap(order_book_buy_tulip.begin(), order_book_buy_tulip.end(), compare_orders);
-    // make_heap(order_book_sell_tulip.begin(), order_book_sell_tulip.end(), compare_orders);
-    // make_heap(order_book_buy_orchid.begin(), order_book_buy_orchid.end(), compare_orders);
-    // make_heap(order_book_sell_orchid.begin(), order_book_sell_orchid.end(), compare_orders);
-
     string file_path;
     cout << "Enter file path : ";
     cin >> file_path;
@@ -238,14 +207,10 @@ int main(int argc, char const *argv[])
         else
         {
             int index = (int)(find(begin(instruments), end(instruments), order.instrument) - begin(instruments));
-            // vector<Order> **orderBook = order_books[index];
             OrderBook &orderBook = order_books_map[order.instrument];
-            // vector<Order> &buy_side = *orderBook[0];
-            // vector<Order> &sell_side = *orderBook[1];
             if (order.side == 1)
             {
                 // buy order
-                // vector<Order> &sell_side = *orderBook[1];
                 vector<Order> &sell_side = orderBook.sell_orders;
                 while (!sell_side.empty() && sell_side.front().price <= order.price) // if there are sell orders in the order book and the price of the sell order is less than or equal to the price of the buy order
                 {
@@ -302,7 +267,6 @@ int main(int argc, char const *argv[])
                 //
                 if (order.remaining_quantity > 0.0) // if the order is not executed completely
                 {
-                    // vector<Order> &buy_side = *orderBook[0];
                     vector<Order> &buy_side = orderBook.buy_orders;
                     order.temp_id = t_count++;
                     buy_side.push_back(order);
@@ -311,7 +275,6 @@ int main(int argc, char const *argv[])
             }
             else if (order.side == 2) // sell order
             {
-                // vector<Order> &buy_side = *orderBook[0];
                 vector<Order> &buy_side = orderBook.buy_orders;
                 while (!buy_side.empty() && buy_side.front().price >= order.price) // if there are buy orders in the order book and the price of the buy order is greater than or equal to the price of the sell order
                 {
@@ -368,7 +331,6 @@ int main(int argc, char const *argv[])
 
                 if (order.remaining_quantity > 0.0) // if the order is not executed completely
                 {
-                    // vector<Order> &sell_side = *orderBook[1];
                     vector<Order> &sell_side = orderBook.sell_orders;
                     order.temp_id = t_count++;
                     sell_side.push_back(order);
