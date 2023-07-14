@@ -132,26 +132,42 @@ bool compare_orders(const Order &ord1, const Order &ord2)
         return ord1.price > ord2.price;
     }
 }
+class OrderBook
+{
+public:
+    vector<Order> buy_orders;
+    vector<Order> sell_orders;
+};
 
-vector<Order> order_book_buy_rose;
-vector<Order> order_book_sell_rose;
-vector<Order> order_book_buy_lavender;
-vector<Order> order_book_sell_lavender;
-vector<Order> order_book_buy_lotus;
-vector<Order> order_book_sell_lotus;
-vector<Order> order_book_buy_tulip;
-vector<Order> order_book_sell_tulip;
-vector<Order> order_book_buy_orchid;
-vector<Order> order_book_sell_orchid;
+OrderBook order_books[5];
+
+map<string, OrderBook> order_books_map = {
+    {"Rose", order_books[0]},
+    {"Lavender", order_books[1]},
+    {"Lotus", order_books[2]},
+    {"Tulip", order_books[3]},
+    {"Orchid", order_books[4]},
+};
+
+// vector<Order> order_book_buy_rose;
+// vector<Order> order_book_sell_rose;
+// vector<Order> order_book_buy_lavender;
+// vector<Order> order_book_sell_lavender;
+// vector<Order> order_book_buy_lotus;
+// vector<Order> order_book_sell_lotus;
+// vector<Order> order_book_buy_tulip;
+// vector<Order> order_book_sell_tulip;
+// vector<Order> order_book_buy_orchid;
+// vector<Order> order_book_sell_orchid;
 
 // five order books for five instruments
-vector<Order> *order_books[5][2] = {
-    {&order_book_buy_rose, &order_book_sell_rose},
-    {&order_book_buy_lavender, &order_book_sell_lavender},
-    {&order_book_buy_lotus, &order_book_sell_lotus},
-    {&order_book_buy_tulip, &order_book_sell_tulip},
-    {&order_book_buy_orchid, &order_book_sell_orchid},
-};
+// vector<Order> *order_books[5][2] = {
+//     {&order_book_buy_rose, &order_book_sell_rose},
+//     {&order_book_buy_lavender, &order_book_sell_lavender},
+//     {&order_book_buy_lotus, &order_book_sell_lotus},
+//     {&order_book_buy_tulip, &order_book_sell_tulip},
+//     {&order_book_buy_orchid, &order_book_sell_orchid},
+// };
 
 int main(int argc, char const *argv[])
 {
@@ -222,14 +238,15 @@ int main(int argc, char const *argv[])
         else
         {
             int index = (int)(find(begin(instruments), end(instruments), order.instrument) - begin(instruments));
-            vector<Order> **orderBook = order_books[index];
+            // vector<Order> **orderBook = order_books[index];
+            OrderBook &orderBook = order_books_map[order.instrument];
             // vector<Order> &buy_side = *orderBook[0];
             // vector<Order> &sell_side = *orderBook[1];
-
             if (order.side == 1)
             {
                 // buy order
-                vector<Order> &sell_side = *orderBook[1];
+                // vector<Order> &sell_side = *orderBook[1];
+                vector<Order> &sell_side = orderBook.sell_orders;
                 while (!sell_side.empty() && sell_side.front().price <= order.price) // if there are sell orders in the order book and the price of the sell order is less than or equal to the price of the buy order
                 {
                     Order &s_order = sell_side.front();
@@ -285,7 +302,8 @@ int main(int argc, char const *argv[])
                 //
                 if (order.remaining_quantity > 0.0) // if the order is not executed completely
                 {
-                    vector<Order> &buy_side = *orderBook[0];
+                    // vector<Order> &buy_side = *orderBook[0];
+                    vector<Order> &buy_side = orderBook.buy_orders;
                     order.temp_id = t_count++;
                     buy_side.push_back(order);
                     push_heap(buy_side.begin(), buy_side.end(), compare_orders);
@@ -293,7 +311,8 @@ int main(int argc, char const *argv[])
             }
             else if (order.side == 2) // sell order
             {
-                vector<Order> &buy_side = *orderBook[0];
+                // vector<Order> &buy_side = *orderBook[0];
+                vector<Order> &buy_side = orderBook.buy_orders;
                 while (!buy_side.empty() && buy_side.front().price >= order.price) // if there are buy orders in the order book and the price of the buy order is greater than or equal to the price of the sell order
                 {
                     Order &b_order = buy_side.front();
@@ -349,7 +368,8 @@ int main(int argc, char const *argv[])
 
                 if (order.remaining_quantity > 0.0) // if the order is not executed completely
                 {
-                    vector<Order> &sell_side = *orderBook[1];
+                    // vector<Order> &sell_side = *orderBook[1];
+                    vector<Order> &sell_side = orderBook.sell_orders;
                     order.temp_id = t_count++;
                     sell_side.push_back(order);
                     push_heap(sell_side.begin(), sell_side.end(), compare_orders);
