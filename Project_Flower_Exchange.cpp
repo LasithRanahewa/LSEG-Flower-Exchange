@@ -155,10 +155,8 @@ int main(int argc, char const *argv[])
     cout << "Enter file path : ";
     cin >> file_path;
 
-    cout << "started..." << endl;
-    auto start = chrono::high_resolution_clock::now();
-
     ifstream orders(file_path);
+
     // ifstream orders(orders_file_path);
     if (!orders.is_open())
     {
@@ -166,6 +164,10 @@ int main(int argc, char const *argv[])
         cout << "Invalid file path : " << file_path << endl;
         return 1;
     }
+    
+    cout << "started..." << endl;
+    auto start = chrono::high_resolution_clock::now();
+
     string line;
     getline(orders, line); // skip the first line
 
@@ -253,7 +255,7 @@ int main(int argc, char const *argv[])
                         pop_heap(sell_side.begin(), sell_side.end(), compare_orders);
                         sell_side.pop_back();
                         s_order.temp_id = t_count++;
-                        sell_side.push_back(s_order);
+                        sell_side.emplace_back(s_order);
                         push_heap(sell_side.begin(), sell_side.end(), compare_orders);
                         order.remaining_quantity = 0;
                         break;
@@ -269,8 +271,8 @@ int main(int argc, char const *argv[])
                 {
                     vector<Order> &buy_side = orderBook.buy_orders;
                     order.temp_id = t_count++;
-                    buy_side.push_back(order);
-                    push_heap(buy_side.begin(), buy_side.end(), compare_orders);
+                    buy_side.emplace_back(order);
+                    push_heap(buy_side.begin(), buy_side.end(), compare_orders); 
                 }
             }
             else if (order.side == 2) // sell order
@@ -317,7 +319,7 @@ int main(int argc, char const *argv[])
                         pop_heap(buy_side.begin(), buy_side.end(), compare_orders);
                         buy_side.pop_back();
                         b_order.temp_id = t_count++;
-                        buy_side.push_back(b_order);
+                        buy_side.emplace_back(b_order);
                         push_heap(buy_side.begin(), buy_side.end(), compare_orders);
                         order.remaining_quantity = 0;
                         break;
@@ -333,7 +335,7 @@ int main(int argc, char const *argv[])
                 {
                     vector<Order> &sell_side = orderBook.sell_orders;
                     order.temp_id = t_count++;
-                    sell_side.push_back(order);
+                    sell_side.emplace_back(order);
                     push_heap(sell_side.begin(), sell_side.end(), compare_orders);
                 }
             }
